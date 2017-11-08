@@ -5,6 +5,9 @@ from collections import defaultdict
 name = ""
 inv_index = defaultdict(list)
 postings = defaultdict(set)
+stop_words = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
+              'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the',
+              'to', 'was', 'were', 'will', 'with'}
 
 
 def normalize(term):
@@ -34,17 +37,20 @@ def index(filename):
             for line in file:
                 # split them to list of terms
                 tweet = line.split()
+
                 for term in tweet:
                     # remove clutter
                     term = normalize(term)
+                    # check if term is in stop words to save some memory
+                    if term in stop_words:
+                        continue
                     # add docID
                     postings[term].add(docID)
                     # update inv_index
                     # we use the term as pointer, because python does not
                     # support pointers, and storing int by indexes will have an
                     # massive overhead
-                    inv_index[term] = \
-                        (len(postings[term]), term)
+                    inv_index[term] = (len(postings[term]), term)
                 # increase line number counter
                 docID += 1
                 # this is for displaying a progress while indexing
