@@ -28,7 +28,6 @@ def index(filename):
     name = filename
     try:
         # open file
-        global file
         with open(filename, "r") as file:
             docID = 0
             # iterate over each line in file
@@ -36,12 +35,17 @@ def index(filename):
                 # split them to list of terms
                 tweet = line.split()
                 for term in tweet:
+                    # remove clutter
                     term = normalize(term)
+                    # add docID
                     postings[term].add(docID)
                     # update inv_index
+                    # we use the term as pointer, because python does not
+                    # support pointers, and storing int by indexes will have an
+                    # massive overhead
                     inv_index[term] = \
                         (len(postings[term]), term)
-                # count line numbers
+                # increase line number counter
                 docID += 1
                 # this is for displaying a progress while indexing
                 if docID % 10000 == 0:
@@ -71,7 +75,7 @@ def query(term1, term2=""):
     for one, otherwise they both have to exist in the tweet
     """
     lines = []
-
+    # remove clutter
     term1 = normalize(term1)
     term2 = normalize(term2)
     # if only one term given look for it
@@ -114,5 +118,5 @@ def query(term1, term2=""):
 if __name__ == '__main__':
     index("tweets")
     print("finished indexing")
-    # print(query("this"))
+    # print(query("geldern"))
     print(query("stuttgart", "bahn"))
