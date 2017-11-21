@@ -128,7 +128,7 @@ def query(term1, term2=""):
     you can query your search terms. If only one term given it only searches
     for one, otherwise they both have to exist in the tweet
     """
-    lines = []
+    lines = {}
     # remove clutter
     term1 = normalize(term1)
     term2 = normalize(term2)
