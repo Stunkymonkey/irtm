@@ -55,7 +55,9 @@ def normalize(term):
         replace("/", "").\
         replace("#", "").\
         replace("!", "").\
-        replace("?", "")
+        replace("?", "").\
+        replace("'", "").\
+        replace("\"", "")
 
 
 def index(filename):
@@ -201,7 +203,6 @@ def addSuggestions(term):
         alpha = term[i]
         if not re.match('[a-z]', alpha):
             continue
-        # print(eval('key_' + alpha))
         keys = eval('key_' + alpha)
         for k in keys:
             new = list(term)
