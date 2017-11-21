@@ -15,6 +15,8 @@ stop_words = {'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
               'to', 'was', 'were', 'will', 'with'}
 count = 0
 
+
+# if you look on the keyboard, these are the keys around every key (US-Layout)
 key_q = {"w", "s", "a"}
 key_w = {"q", "e", "a", "s", "d"}
 key_e = {"w", "r", "s", "d", "f"}
@@ -105,6 +107,9 @@ def index(filename):
 
 
 def getLines(lines):
+    """
+    get lines of multiple lines
+    """
     result = ""
     try:
         # open file
@@ -159,21 +164,27 @@ def query(term1, term2=""):
             except StopIteration:
                 break
     else:
+        # if nothing is found it will look for alternative querys in the
+        # suggestions dict
         print("nothing found")
+        # if simple query has nothing found
         if not term2:
             for new in suggestions[term1]:
                 print("Possible search query: " + new)
                 lines += query(new)
+        # if complex query has nothing found for both querys
         elif term1 in suggestions and term2 in suggestions:
             for new1 in suggestions[term1]:
                 for new2 in suggestions[term2]:
                     print("Possible search query: " + new1 + ", " + new2)
                     lines += query(new1, new2)
+        # if complex query has nothing found for one query
         elif term1 in suggestions and term2 not in suggestions:
             print("Possible search query:")
             for new in suggestions[term1]:
                 print("Possible search query: " + new + ", " + term2)
                 lines += query(new, term2)
+        # if complex query has nothing found for the other one query
         elif term1 not in suggestions and term2 in suggestions:
             print("Possible search query:")
             for new in suggestions[term2]:
@@ -184,10 +195,13 @@ def query(term1, term2=""):
 
 
 def read_correct(filename):
+    """
+    fill correct_spelling
+    """
     try:
         # open file
         with open(filename, "r") as file:
-            # iterate over the lines and print the lines, which match the terms
+            # iterate over the lines and add them to the correct_spelling
             for term in file:
                 term = normalize(term)
                 if term in stop_words:
@@ -199,17 +213,37 @@ def read_correct(filename):
 
 
 def addSuggestions(term):
+    """
+    fill suggestions but only generate worde with levinstein distance of one
+    otherwise the programm will use to much ram
+    with this configuration it will already use 28gb of ram
+    """
+    # iterate over the word by its lenght
     for i in range(0, len(term)):
+        # get char at position i
         alpha = term[i]
+        # if char ist not between a to z it skips to the next char
         if not re.match('[a-z]', alpha):
             continue
+        # other wise it loads the keys around that char
         keys = eval('key_' + alpha)
+        # it changes the char to every other value and stores it in suggestions
         for k in keys:
             new = list(term)
             new[i] = k
             suggestions[''.join(new)].add(term)
+        # then it removes the one value and stores it
         new = list(term)
         del new[i]
+        suggestions[''.join(new)].add(term)
+        # adds key to the char (slipping of a key)
+        new = list(term)
+        for k in keys:
+            new.insert(i, k)
+            suggestions[''.join(new)].add(term)
+        # adds keys to the position (dubble pressing)
+        new = list(term)
+        new.insert(i, alpha)
         suggestions[''.join(new)].add(term)
 
 
@@ -241,16 +275,23 @@ if __name__ == '__main__':
     # print("finished reading words")
     index("tweets")
     # print("\nfinished indexing")
-    print(len(inv_index))
+    # print(len(inv_index))
+    # for right exit code
     try:
+        # asking for more querys
         while True:
+            # ask for input
             search = input('What are you looking for?: ')
             try:
+                # if it is a simple query this is successfull
                 term1, term2 = search.split(" ")
             except ValueError:
+                # if the line before fails only this one will get executed
+                # (simple query)
                 print("simple search query")
                 print(getLines(query(search)))
                 continue
+            # complex query
             print("tuple search query")
             print(getLines(query(term1, term2)))
     except KeyboardInterrupt:
