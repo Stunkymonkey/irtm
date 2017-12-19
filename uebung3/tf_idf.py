@@ -110,7 +110,7 @@ def cosine_similarity(vector1, vector2):
     return dot_product / magnitude
 
 
-def getLines(filename, lines):
+def getLines(filename, lines, sim):
     """
     get lines of multiple lines
     """
@@ -119,9 +119,14 @@ def getLines(filename, lines):
         # open file
         with open(filename, "r") as file:
             # iterate over the lines and print the lines, which match the terms
+            tmp = []
             for i, line in enumerate(file):
                 if i in lines:
-                    result += str(i) + "\t" + line
+                    tmp.append((i, line))
+            for i, line in enumerate(lines):
+                for j in tmp:
+                    if (line == j[0]):
+                        result += str(sim[i]) + "\t" + str(j[0]) + "\t" + j[1]
     except FileNotFoundError as e:
         raise SystemExit("Could not open file: " + str(e))
     return result
@@ -131,7 +136,6 @@ def main():
     filename = "tweets"
     index(filename)
     inverseDocumentFrequency()
-    print(idf["geldern"])
     tfidf()
     try:
         # asking for more querys
@@ -170,12 +174,14 @@ def main():
                         make_vector[i] = doc[key]
                     i += 1
                 similarity = cosine_similarity(vector, make_vector)
-                tfidf_comparisons.append((similarity, count))
+                if similarity > 0:
+                    tfidf_comparisons.append((similarity, count))
             lines = []
-            for x in sorted(tfidf_comparisons, reverse=True)[:100]:
-                # print(x)
+            sim = []
+            for x in sorted(tfidf_comparisons, key=lambda y: float(y[0]), reverse=True)[:100]:
+                sim.append(x[0])
                 lines.append(x[1])
-            print(getLines(filename, lines))
+            print(getLines(filename, lines, sim))
     except KeyboardInterrupt:
         pass
 
