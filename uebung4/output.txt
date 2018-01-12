@@ -1,0 +1,21 @@
+good-classifier:
+spiel = (gut: 10260, schlecht: 40935)
+cool = (gut: 623, schlecht: 24918)
+super = (gut: 876, schlecht: 18670)
+geil = (gut: 268, schlecht: 15479)
+gut = (gut: 1296, schlecht: 14723)
+bad-classifier:
+mehr = (gut: 7009, schlecht: 4906)
+update = (gut: 3761, schlecht: 2481)
+seit = (gut: 3473, schlecht: 2220)
+beheben = (gut: 2206, schlecht: 1231)
+komme = (gut: 1446, schlecht: 493)
+
+accuracy: 0.8414758212194515
+total predictions: 44233
+
+bad and prediction was right: 6672
+good and prediction was right: 30549
+bad and prediction was wrong: 5867
+good and prediction was wrong: 1145
+
