@@ -1,3 +1,5 @@
+Subtask 1:
+
 good-classifier:
 spiel = (gut: 10260, schlecht: 40935)
 cool = (gut: 623, schlecht: 24918)
@@ -11,6 +13,10 @@ seit = (gut: 3473, schlecht: 2220)
 beheben = (gut: 2206, schlecht: 1231)
 komme = (gut: 1446, schlecht: 493)
 
+
+
+Subtask 2:
+
 accuracy: 0.8414758212194515
 total predictions: 44233
 
@@ -19,3 +25,4 @@ good and prediction was right: 30549
 bad and prediction was wrong: 5867
 good and prediction was wrong: 1145
 
+Da in den Trainings-Daten sehr viel mehr Gute als schlechte Bewertungen vorkommen, ist es nicht verwunderlich, dass die guten Bewertungen besser erkannt werden. Die Genauigkeit liegt bei über 84%.
